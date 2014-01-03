@@ -61,21 +61,28 @@ class HomePageTest(TestCase):
         response = home_page(request)
         
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/')
+        self.assertEqual(response['location'], '/lists/the-only-list-in-the-world/')
                 
     def test_home_page_only_saves_items_when_necessary(self):
         """docstring for test_home_page_only_saves_items_when_necessary"""
         request = HttpRequest()
         home_page(request)
         self.assertEqual(Item.objects.all().count(), 0)
+                
+class ListViewTest(TestCase):
+    """docstring for ListViewTest"""
+
+    def test_ises_list_templates(self):
+        """docstring for test_ises_list_templates"""
+        response = self.client.get('/lists/the-only-list-in-the-world/')
+        self.assertTemplateUsed(response, 'list.html')
         
-    def test_home_page_displays_all_list_items(self):
-        """docstring for test_home_page_displays_all_list_items"""
+    def test_displays_all_items(self):
+        """docstring for test_displays_all_items"""
         Item.objects.create(text='itemey 1')
         Item.objects.create(text='itemey 2')
         
-        request = HttpRequest()
-        response = home_page(request)
+        response = self.client.get('/lists/the-only-list-in-the-world/')
         
-        self.assertIn('itemey 1', response.content.decode())
-        self.assertIn('itemey 2', response.content.decode())
+        self.assertContains(response, 'itemey 1')
+        self.assertContains(response, 'itemey 2')
