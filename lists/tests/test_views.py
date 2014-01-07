@@ -67,16 +67,6 @@ class ListViewTest(TestCase):
             data={'text': 'A new item for an existing list'}
         )
         self.assertRedirects(response, '/lists/%d/' % (correct_list.id,))
-    
-    # def test_validation_errors_end_up_on_lists_page(self):
-    #     listey = List.objects.create()
-    #     response = self.client.post(
-    #         '/lists/%d/' % (listey.id,),
-    #         data={'text': ''}
-    #     )
-    #     self.assertEqual(Item.objects.all().count(), 0)
-    #     self.assertTemplateUsed(response, 'list.html')
-    #     self.assertContains(response, escape(EMPTY_LIST_ERROR))
 
     def post_invalid_input(self):
         list_ = List.objects.create()
@@ -127,6 +117,6 @@ class NewListTest(TestCase):
     def test_validation_errors_sent_back_to_home_page_template(self):
         response = self.client.post('/lists/new', data={'text': ''}) 
         self.assertEqual(Item.objects.all().count(), 0) 
+        self.assertEqual(List.objects.all().count(), 0) 
         self.assertTemplateUsed(response, 'home.html')
-        self.assertContains(response, escape(EMPTY_LIST_ERROR)) 
-        self.assertIsInstance(response.context['form'], ItemForm)
+        self.assertContains(response, escape(EMPTY_LIST_ERROR))
